@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Valentine 💖</title>
+
+<style>
+body{
+  font-family:Arial,sans-serif;
+  text-align:center;
+  background:#ffb6c1;
+  padding:30px;
+  margin:0;
+  overflow-x:hidden;
+  transition:background 1s;
+}
+h1,h2,p{color:#fff}
+button{
+  padding:14px 24px;
+  font-size:18px;
+  border:none;
+  border-radius:25px;
+  background:#ff4d88;
+  color:white;
+  margin:10px;
+}
+input{
+  font-size:22px;
+  padding:10px;
+  width:140px;
+  text-align:center;
+  letter-spacing:8px;
+}
+.hidden{display:none}
+
+/* falling hearts & snow */
+.fall{
+  position:fixed;
+  top:-20px;
+  pointer-events:none;
+  animation:fallFade linear;
+}
+@keyframes fallFade{
+  0%{transform:translateY(0);opacity:1}
+  100%{transform:translateY(100vh);opacity:0}
+}
+</style>
+</head>
+
+<body>
+
+<!-- SCREEN 1 -->
+<div id="s1">
+  <h1>💖 Will you be my Valentine? 💖</h1>
+  <p><i>I’m not a coder, but I know how to use tools — and I’m damn good at it.</i></p>
+  <button onclick="yes()">YES 🥰</button>
+  <button onclick="no()">NO 😒</button>
+</div>
+
+<!-- NO SCREEN -->
+<div id="sNo" class="hidden">
+  <h2>Rethinking… 😌</h2>
+  <p>Asking again in <span id="c">5</span>…</p>
+</div>
+
+<!-- LISTEN SCREEN -->
+<div id="sListen" class="hidden">
+  <h1>🎵 Listen to me ❤️</h1>
+  <p>Tap below & listen for at least 50 seconds</p>
+
+  <!-- CLICKABLE IMAGE / LINK -->
+  <a href="https://www.youtube.com/watch?v=7KKVb0_IdD4" target="_blank">
+    <img src="song.png" width="220" style="border-radius:20px">
+  </a>
+
+  <p id="t"></p>
+  <button id="nextBtn" class="hidden" onclick="goPass()">Next ➜</button>
+</div>
+
+<!-- PASSWORD -->
+<div id="sPass" class="hidden">
+  <h2>🔐 Unlock the surprise</h2>
+  <p>Hint: THINK! | 3 attempts only</p>
+  <input type="password" id="pass" maxlength="4"><br><br>
+  <button onclick="check()">Unlock 💝</button>
+  <p id="err"></p>
+</div>
+
+<!-- COUNTDOWN -->
+<div id="sFinal" class="hidden">
+  <h1>💖 Just wait for it 💖</h1>
+  <p id="d"></p>
+  <p id="ti"></p>
+  <h2 id="cd"></h2>
+  <p>A mail will come after this ❤️</p>
+</div>
+
+<script>
+/* hearts + snow */
+setInterval(()=>{
+  const e=document.createElement("div");
+  e.className="fall";
+  e.innerText=Math.random()>0.5?"❤️":"❄️";
+  e.style.left=Math.random()*innerWidth+"px";
+  e.style.fontSize=(Math.random()*14+12)+"px";
+  e.style.animationDuration=(Math.random()*6+6)+"s";
+  document.body.appendChild(e);
+  setTimeout(()=>e.remove(),12000);
+},350);
+
+function hideAll(){
+  s1.style.display=sNo.style.display=
+  sListen.style.display=sPass.style.display=
+  sFinal.style.display="none";
+}
+
+/* NO */
+function no(){
+  hideAll();sNo.style.display="block";
+  let x=5;c.innerText=x;
+  const k=setInterval(()=>{
+    x--;c.innerText=x;
+    if(x==0){clearInterval(k);hideAll();s1.style.display="block";}
+  },1000);
+}
+
+/* YES */
+function yes(){
+  document.body.style.background=
+   "linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),url('bg.png') center/cover fixed";
+  hideAll();sListen.style.display="block";
+
+  let sec=50;
+  t.innerText="⏳ "+sec+" seconds";
+  const timer=setInterval(()=>{
+    sec--;t.innerText="⏳ "+sec+" seconds";
+    if(sec<=0){
+      clearInterval(timer);
+      t.innerText="You can continue listening 💖";
+      nextBtn.classList.remove("hidden");
+    }
+  },1000);
+}
+
+/* NEXT */
+function goPass(){
+  hideAll();sPass.style.display="block";
+}
+
+/* PASSWORD */
+let tries=0;
+function check(){
+  tries++;
+  if(pass.value.toUpperCase()=="SNOW"){
+    hideAll();sFinal.style.display="block";start();
+  }else{
+    err.innerText="Wrong 😜 Attempts left: "+(3-tries);
+    pass.value="";
+  }
+}
+
+/* COUNTDOWN */
+function start(){
+  const target=new Date();
+  target.setDate(12);
+  target.setHours(23,59,59);
+  setInterval(()=>{
+    const n=new Date();
+    d.innerText="Today: "+n.toDateString();
+    ti.innerText="Time: "+n.toLocaleTimeString();
+    let diff=target-n;
+    if(diff<=0){cd.innerText="💘 It’s time ❤️";return;}
+    cd.innerText=
+     `⏳ ${Math.floor(diff/86400000)}d ${Math.floor(diff/3600000)%24}h `+
+     `${Math.floor(diff/60000)%60}m ${Math.floor(diff/1000)%60}s`;
+  },1000);
+}
+</script>
+
+</body>
+</html>
